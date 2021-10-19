@@ -23,7 +23,7 @@ async function searchShows(query) {
   // TODO: Make an ajax request to the searchShows api.  Remove
   // hard coded data.
   let response = await axios.get(
-    `http://api.tvmaze.com/search/shows?q=${query}`
+    `https://api.tvmaze.com/search/shows?q=${query}`
   );
 
   let shows = response.data.map(result => {
@@ -93,6 +93,29 @@ async function getEpisodes(id) {
   // TODO: get episodes from tvmaze
   //       you can get this by making GET request to
   //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
-
+  let response = await axios.get(`https://api.tvmaze.com/shows/${id}/episodes`)
   // TODO: return array-of-episode-info, as described in docstring above
+  let episodes = response.data.map(episode => ({
+    id: episode.id,
+    name: episode.name,
+    season: episode.season,
+    number: episode.number
+  }))
+  return episodes;
+}
+
+function populateEpisodes(episodes) {
+  const $episodesList = $("#episodesList");
+  $episodesList.empty();
+
+  for (let episode of episodes) {
+    let $item = $(
+      `<li>
+      ${episode.name}
+      $(Season ${episode.season}, Episode ${episode.number})
+      </li>`
+    )
+    $episodesList.append($item);
+  }
+  $('#episodes-area').show();
 }
